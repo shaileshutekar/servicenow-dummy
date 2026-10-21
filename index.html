@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Incidents | ServiceNow (Dummy)</title>
+<style>
+  :root {
+    --nav-bg: #1f2d3d;
+    --nav-text: #f1f4f7;
+    --brand-green: #62d84e;
+    --page-bg: #f2f4f6;
+    --panel: #ffffff;
+    --border: #d5dbe1;
+    --text: #1f2933;
+    --muted: #6b7885;
+    --link: #1a6bb5;
+    --row-hover: #eaf3fb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Source Sans Pro", "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--page-bg);
+  }
+
+  /* ---------- Top banner ---------- */
+  .banner {
+    height: 52px;
+    background: var(--nav-bg);
+    color: var(--nav-text);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 24px;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--nav-text); }
+  .logo svg { height: 28px; width: 28px; }
+  .logo-text { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; }
+  .banner-search {
+    flex: 1; max-width: 360px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 4px; padding: 7px 10px;
+    color: var(--nav-text); font-size: 14px;
+  }
+  .banner-search::placeholder { color: #b9c4cf; }
+  .banner-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--brand-green); color: #12261a;
+    display: grid; place-items: center; font-weight: 700; font-size: 12px;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout { display: flex; min-height: calc(100vh - 52px); }
+  .sidebar {
+    width: 230px; background: var(--panel);
+    border-right: 1px solid var(--border);
+    padding: 12px 0; flex-shrink: 0;
+  }
+  .sidebar h4 { margin: 14px 16px 6px; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .sidebar a {
+    display: block; padding: 7px 16px; color: var(--text);
+    text-decoration: none; cursor: pointer;
+  }
+  .sidebar a:hover { background: var(--row-hover); }
+  .sidebar a.active { background: var(--row-hover); border-left: 3px solid var(--link); padding-left: 13px; font-weight: 600; }
+  .sidebar .count { float: right; color: var(--muted); font-size: 12px; }
+
+  .main { flex: 1; padding: 16px 20px; min-width: 0; }
+
+  /* ---------- List header ---------- */
+  .list-header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .list-header h1 { font-size: 20px; margin: 0; font-weight: 600; }
+  .list-header .spacer { flex: 1; }
+  select, input[type="search"] {
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 6px 8px; font: inherit; background: #fff; color: var(--text);
+  }
+  input[type="search"] { width: 240px; }
+  button {
+    font: inherit; padding: 6px 14px; border-radius: 4px; cursor: pointer;
+    border: 1px solid var(--border); background: #fff; color: var(--text);
+  }
+  button.primary { background: #293e40; color: #fff; border-color: #293e40; }
+  button:hover { filter: brightness(0.96); }
+  :focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
+
+  /* ---------- Table ---------- */
+  .table-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 980px; }
+  th {
+    text-align: left; padding: 9px 12px; font-weight: 600; white-space: nowrap;
+    background: #f7f9fa; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none;
+  }
+  th .arrow { color: var(--muted); font-size: 10px; margin-left: 4px; }
+  td { padding: 9px 12px; border-bottom: 1px solid #e8ecef; vertical-align: middle; }
+  tbody tr:hover { background: var(--row-hover); }
+  tbody tr { cursor: pointer; }
+  td.number { color: var(--link); font-weight: 600; white-space: nowrap; }
+  .empty { padding: 32px; text-align: center; color: var(--muted); }
+
+  /* ---------- Priority and state chips ---------- */
+  .prio { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .p1 { background: #d9302c; } .p2 { background: #f08a24; } .p3 { background: #e8c21a; } .p4 { background: #4aa564; }
+  .state { padding: 2px 8px; border-radius: 10px; font-size: 12px; white-space: nowrap; background: #e6ebef; }
+  .s-New { background: #dbeafe; color: #1e4a8a; }
+  .s-In\ Progress { background: #fff1cc; color: #7a5600; }
+  .s-On\ Hold { background: #ead9f7; color: #5b2a86; }
+  .s-Resolved { background: #d9f2e0; color: #1f6b3a; }
+  .s-Closed { background: #e6ebef; color: #4b5864; }
+
+  .footer { margin-top: 10px; color: var(--muted); display: flex; justify-content: space-between; }
+
+  /* ---------- Detail drawer ---------- */
+  .drawer {
+    position: fixed; top: 52px; right: 0; bottom: 0; width: 400px; max-width: 100%;
+    background: var(--panel); border-left: 1px solid var(--border);
+    box-shadow: -4px 0 12px rgba(0,0,0,.08);
+    padding: 18px; overflow-y: auto; display: none;
+  }
+  .drawer.open { display: block; }
+  .drawer h2 { margin: 0 0 4px; font-size: 18px; }
+  .drawer dl { display: grid; grid-template-columns: 130px 1fr; gap: 8px 12px; margin: 16px 0; }
+  .drawer dt { color: var(--muted); }
+  .drawer dd { margin: 0; }
+  .drawer .close { float: right; }
+
+  @media (max-width: 800px) { .sidebar { display: none; } }
+</style>
+</head>
+<body>
+
+<!-- ======= Top banner with logo ======= -->
+<header class="banner">
+  <a class="logo" href="#" aria-label="ServiceNow home">
+    <!-- Placeholder logo. Replace this <svg> with your official ServiceNow logo file/image. -->
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="14" fill="none" stroke="#62d84e" stroke-width="4"/>
+      <circle cx="16" cy="16" r="5" fill="#62d84e"/>
+    </svg>
+    <span class="logo-text">servicenow</span>
+  </a>
+  <input class="banner-search" type="search" placeholder="Search" aria-label="Global search">
+  <div class="banner-right">
+    <span>IT Service Desk</span>
+    <div class="avatar" title="Signed-in user">AD</div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- ======= Sidebar ======= -->
+  <nav class="sidebar" aria-label="Incident filters">
+    <h4>Incident</h4>
+    <a data-filter="all" class="active">All <span class="count" id="c-all"></span></a>
+    <a data-filter="open">Open <span class="count" id="c-open"></span></a>
+    <a data-filter="critical">Critical (P1) <span class="count" id="c-critical"></span></a>
+    <a data-filter="unassigned">Unassigned <span class="count" id="c-unassigned"></span></a>
+    <a data-filter="resolved">Resolved / Closed <span class="count" id="c-resolved"></span></a>
+    <h4>Category</h4>
+    <a data-cat="Hardware">Hardware</a>
+    <a data-cat="Software">Software</a>
+    <a data-cat="Network">Network</a>
+    <a data-cat="Access">Access</a>
+  </nav>
+
+  <!-- ======= Main list ======= -->
+  <main class="main">
+    <div class="list-header">
+      <h1>Incidents</h1>
+      <span class="spacer"></span>
+      <select id="priorityFilter" aria-label="Filter by priority">
+        <option value="">All priorities</option>
+        <option value="1">1 - Critical</option>
+        <option value="2">2 - High</option>
+        <option value="3">3 - Moderate</option>
+        <option value="4">4 - Low</option>
+      </select>
+      <input type="search" id="search" placeholder="Search number, description, caller" aria-label="Search incidents">
+      <button class="primary" id="newBtn">New</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr id="headRow"></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden>No incidents match your filters.</div>
+    </div>
+    <div class="footer"><span id="rowCount"></span><span>Dummy data for demo use</span></div>
+  </main>
+</div>
+
+<!-- ======= Detail drawer ======= -->
+<aside class="drawer" id="drawer" aria-label="Incident details">
+  <button class="close" id="closeDrawer">Close</button>
+  <h2 id="d-number"></h2>
+  <div id="d-short"></div>
+  <dl id="d-list"></dl>
+  <strong>Description</strong>
+  <p id="d-desc"></p>
+</aside>
+
+<script>
+/* =====================================================================
+   1. DATA  -  Replace this array (or call renderTickets(yourData)) to
+      show your own records. Keep the same field names.
+   ===================================================================== */
+const tickets = [
+  { number: "INC0010001", opened: "2026-10-09 08:42", short: "Laptop not working - will not power on", description: "User reports the laptop shows no lights and does not respond to the power button. Charger was tested on another device.", caller: "Priya Sharma", priority: 2, state: "New", category: "Hardware", group: "Desktop Support", assignee: "" },
+  { number: "INC0010002", opened: "2026-10-09 08:15", short: "Printer not working - 3rd floor", description: "Shared printer on the 3rd floor shows 'Offline' for all users. Jobs stay in queue.", caller: "Rahul Verma", priority: 3, state: "In Progress", category: "Hardware", group: "Desktop Support", assignee: "Amit Patil" },
+  { number: "INC0010003", opened: "2026-10-09 07:58", short: "Unable to connect to VPN", description: "VPN client fails with error 809 when working from home. Internet is working fine.", caller: "Neha Kulkarni", priority: 2, state: "In Progress", category: "Network", group: "Network Operations", assignee: "Sanjay Rao" },
+  { number: "INC0010004", opened: "2026-10-08 17:20", short: "Outlook keeps crashing on startup", description: "Outlook closes immediately after splash screen. Started after the last Windows update.", caller: "Vikram Singh", priority: 3, state: "On Hold", category: "Software", group: "Service Desk", assignee: "Meera Iyer" },
+  { number: "INC0010005", opened: "2026-10-08 16:05", short: "Password reset required - account locked", description: "User is locked out after multiple failed login attempts and cannot use self-service reset.", caller: "Anita Desai", priority: 4, state: "Resolved", category: "Access", group: "Service Desk", assignee: "Meera Iyer" },
+  { number: "INC0010006", opened: "2026-10-08 14:40", short: "Wi-Fi keeps dropping in conference room B", description: "Wi-Fi disconnects every few minutes during meetings. Affects multiple users.", caller: "Karan Mehta", priority: 3, state: "In Progress", category: "Network", group: "Network Operations", assignee: "Sanjay Rao" },
+  { number: "INC0010007", opened: "2026-10-08 11:12", short: "Email server down - no one can send mail", description: "Users across the Mumbai office cannot send or receive email since 11:00.", caller: "Sunita Joshi", priority: 1, state: "In Progress", category: "Software", group: "Messaging Team", assignee: "Rohan Kapoor" },
+  { number: "INC0010008", opened: "2026-10-08 10:30", short: "Monitor flickering and showing no display", description: "External monitor goes black every few minutes. Cable was replaced with no change.", caller: "Deepak Nair", priority: 4, state: "New", category: "Hardware", group: "Desktop Support", assignee: "" },
+  { number: "INC0010009", opened: "2026-10-07 15:47", short: "Software install request - Adobe Acrobat", description: "Requesting Adobe Acrobat Pro installation for the finance team workstation.", caller: "Pooja Reddy", priority: 4, state: "Closed", category: "Software", group: "Service Desk", assignee: "Amit Patil" },
+  { number: "INC0010010", opened: "2026-10-07 13:22", short: "Laptop battery draining very fast", description: "Battery drops from 100% to 20% in under an hour. Laptop is 3 years old.", caller: "Arjun Malhotra", priority: 3, state: "Resolved", category: "Hardware", group: "Desktop Support", assignee: "Amit Patil" },
+  { number: "INC0010011", opened: "2026-10-07 09:10", short: "Cannot access shared drive", description: "Access denied error when opening the Finance shared drive. Worked yesterday.", caller: "Ritu Banerjee", priority: 3, state: "New", category: "Access", group: "Service Desk", assignee: "" },
+  { number: "INC0010012", opened: "2026-10-06 18:02", short: "Microsoft Teams audio not working", description: "Microphone not detected in Teams calls. Works fine in other apps.", caller: "Manish Gupta", priority: 4, state: "In Progress", category: "Software", group: "Service Desk", assignee: "Meera Iyer" }
+];
+
+/* =====================================================================
+   2. COLUMNS  -  Add, remove, or rename columns here.
+   ===================================================================== */
+const columns = [
+  { key: "number",   label: "Number" },
+  { key: "opened",   label: "Opened" },
+  { key: "short",    label: "Short description" },
+  { key: "caller",   label: "Caller" },
+  { key: "priority", label: "Priority" },
+  { key: "state",    label: "State" },
+  { key: "category", label: "Category" },
+  { key: "group",    label: "Assignment group" },
+  { key: "assignee", label: "Assigned to" }
+];
+
+const priorityLabel = { 1: "1 - Critical", 2: "2 - High", 3: "3 - Moderate", 4: "4 - Low" };
+
+/* =====================================================================
+   3. RENDERING LOGIC
+   ===================================================================== */
+let data = tickets.slice();
+let sortKey = "opened", sortDir = -1;
+let quickFilter = "all", categoryFilter = "";
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+/* Call this from anywhere to load your own data:  renderTickets(myArray) */
+function renderTickets(newData) {
+  if (Array.isArray(newData)) data = newData.slice();
+  updateCounts();
+  draw();
+}
+
+function visibleRows() {
+  const q = $("search").value.trim().toLowerCase();
+  const p = $("priorityFilter").value;
+  return data.filter(t => {
+    if (quickFilter === "open" && ["Resolved", "Closed"].includes(t.state)) return false;
+    if (quickFilter === "critical" && t.priority !== 1) return false;
+    if (quickFilter === "unassigned" && t.assignee) return false;
+    if (quickFilter === "resolved" && !["Resolved", "Closed"].includes(t.state)) return false;
+    if (categoryFilter && t.category !== categoryFilter) return false;
+    if (p && String(t.priority) !== p) return false;
+    if (q && !(t.number + " " + t.short + " " + t.caller).toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a, b) => (a[sortKey] > b[sortKey] ? 1 : a[sortKey] < b[sortKey] ? -1 : 0) * sortDir);
+}
+
+function drawHead() {
+  $("headRow").innerHTML = columns.map(c =>
+    `<th data-key="${c.key}">${esc(c.label)}<span class="arrow">${c.key === sortKey ? (sortDir === 1 ? "▲" : "▼") : ""}</span></th>`
+  ).join("");
+  document.querySelectorAll("#headRow th").forEach(th => th.addEventListener("click", () => {
+    const k = th.dataset.key;
+    sortDir = (k === sortKey) ? -sortDir : 1;
+    sortKey = k;
+    draw();
+  }));
+}
+
+function cell(t, key) {
+  switch (key) {
+    case "number":   return `<td class="number">${esc(t.number)}</td>`;
+    case "priority": return `<td><span class="prio"><span class="dot p${t.priority}"></span>${esc(priorityLabel[t.priority] || t.priority)}</span></td>`;
+    case "state":    return `<td><span class="state s-${esc(t.state)}">${esc(t.state)}</span></td>`;
+    case "assignee": return `<td>${t[key] ? esc(t[key]) : '<span style="color:var(--muted)">(empty)</span>'}</td>`;
+    default:         return `<td>${esc(t[key])}</td>`;
+  }
+}
+
+function draw() {
+  drawHead();
+  const rows = visibleRows();
+  $("tbody").innerHTML = rows.map(t =>
+    `<tr data-number="${esc(t.number)}">${columns.map(c => cell(t, c.key)).join("")}</tr>`
+  ).join("");
+  $("empty").hidden = rows.length > 0;
+  $("rowCount").textContent = `1 to ${rows.length} of ${rows.length} rows`;
+  document.querySelectorAll("#tbody tr").forEach(tr =>
+    tr.addEventListener("click", () => openDrawer(tr.dataset.number)));
+}
+
+function updateCounts() {
+  $("c-all").textContent = data.length;
+  $("c-open").textContent = data.filter(t => !["Resolved", "Closed"].includes(t.state)).length;
+  $("c-critical").textContent = data.filter(t => t.priority === 1).length;
+  $("c-unassigned").textContent = data.filter(t => !t.assignee).length;
+  $("c-resolved").textContent = data.filter(t => ["Resolved", "Closed"].includes(t.state)).length;
+}
+
+function openDrawer(number) {
+  const t = data.find(x => x.number === number);
+  if (!t) return;
+  $("d-number").textContent = t.number;
+  $("d-short").textContent = t.short;
+  $("d-desc").textContent = t.description || "No description provided.";
+  const fields = [["Caller", t.caller], ["Opened", t.opened], ["Priority", priorityLabel[t.priority]], ["State", t.state],
+                  ["Category", t.category], ["Assignment group", t.group], ["Assigned to", t.assignee || "(empty)"]];
+  $("d-list").innerHTML = fields.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join("");
+  $("drawer").classList.add("open");
+}
+
+/* Events */
+$("closeDrawer").addEventListener("click", () => $("drawer").classList.remove("open"));
+$("search").addEventListener("input", draw);
+$("priorityFilter").addEventListener("change", draw);
+$("newBtn").addEventListener("click", () => alert("Dummy page: wire this button to your own 'New incident' form."));
+document.querySelectorAll(".sidebar a").forEach(a => a.addEventListener("click", () => {
+  document.querySelectorAll(".sidebar a").forEach(x => x.classList.remove("active"));
+  a.classList.add("active");
+  if (a.dataset.filter) { quickFilter = a.dataset.filter; categoryFilter = ""; }
+  if (a.dataset.cat)    { categoryFilter = a.dataset.cat; quickFilter = "all"; }
+  draw();
+}));
+
+renderTickets();
+</script>
+</body>
+</html>
